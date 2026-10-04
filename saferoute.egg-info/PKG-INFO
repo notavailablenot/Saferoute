@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: saferoute
+Version: 0.1.0
+Summary: Real-Time Traffic Sign Detection and Driver Warning System
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: torch>=2.0.0
+Requires-Dist: ultralytics
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: opencv-python
+Requires-Dist: PyQt6
+Requires-Dist: SQLAlchemy
+Requires-Dist: onnxruntime
+Requires-Dist: albumentations
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+
+# CPE178P---Group-1---AvengozaHembradorLedda
+Group 1 Repository for CPE178P Foundations of AI with Huawei MindSpore and OpenHarmony OS

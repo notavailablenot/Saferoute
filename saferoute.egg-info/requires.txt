@@ -1,0 +1,13 @@
+torch>=2.0.0
+ultralytics
+fastapi
+uvicorn
+opencv-python
+PyQt6
+SQLAlchemy
+onnxruntime
+albumentations
+
+[dev]
+pytest
+ruff
