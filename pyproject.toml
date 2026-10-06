@@ -9,26 +9,32 @@ dependencies = [
     "ultralytics",
     "fastapi",
     "uvicorn",
+    "python-multipart",
     "opencv-python",
     "PyQt6",
-    "SQLAlchemy",
+    "SQLAlchemy>=2.0",
     "onnxruntime",
+    "onnx",
     "albumentations",
+    "pyyaml",
+    "jupyterlab",
+    "ipykernel",
     "imagehash"
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "ruff"
-]
+   dev = [
+       "pytest",
+       "ruff",
+       "httpx",
+   ]
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["saferoute"]
+[tool.setuptools.packages.find]
+include = ["saferoute*"]
 
 [tool.ruff]
 line-length = 100

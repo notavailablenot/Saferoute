@@ -1,7 +1,0 @@
-README.md
-pyproject.toml
-saferoute.egg-info/PKG-INFO
-saferoute.egg-info/SOURCES.txt
-saferoute.egg-info/dependency_links.txt
-saferoute.egg-info/requires.txt
-saferoute.egg-info/top_level.txt
