@@ -1,77 +1,100 @@
-from sqlalchemy import create_engine, event
+"""Repository classes: the only place the Logic Tier touches the database."""
+import os
+from datetime import datetime, timezone
+
+from sqlalchemy import create_engine, event, select
 from sqlalchemy.orm import sessionmaker
-from .models import Base, Session, Alert, PerfMetric
 
-#Create SQLite Engine
-engine = create_engine("sqlite:///saferoute.db", connects_args={"check_same_thread": False})
+from .models import Alert, Base, EvalRun, ModelVersion, PerfMetric, Session
 
-#Enable WAL mode and optimize synchronization on connection
-@event.listens_for(engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA journal_mode=WAL;")
-    cursor.execute("PRAGMA synchronous=NORMAL;")
-    cursor.close()
+DB_URL = os.getenv("SAFEROUTE_DB_URL", "sqlite:///saferoute.db")
 
-#Create Session Factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base.metadata.create_all(bind=engine)
+def make_engine(url: str = DB_URL):
+    engine = create_engine(url, connect_args={"check_same_thread": False})
+
+    @event.listens_for(engine, "connect")
+    def _sqlite_pragmas(dbapi_conn, _record):
+        cur = dbapi_conn.cursor()
+        cur.execute("PRAGMA journal_mode=WAL;")
+        cur.execute("PRAGMA synchronous=NORMAL;")
+        cur.execute("PRAGMA foreign_keys=ON;")
+        cur.close()
+
+    return engine
+
+
+def init_db(url: str = DB_URL):
+    """Create tables explicitly at app startup (not at import time)."""
+    engine = make_engine(url)
+    Base.metadata.create_all(engine)
+    return sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
+
 
 class SessionRepo:
-    """Handles CRUD operations for diving sessions and telemetry"""
     def __init__(self, db):
         self.db = db
 
-    def create_session(self, model_version: str) -> Session:
-        new_session = Session(model_version=model_version)
-        self.db.add(new_session)
+    def create(self, model_version: str) -> Session:
+        s = Session(model_version=model_version)
+        self.db.add(s)
         self.db.commit()
-        self.db.refresh(new_session)
-        return new_session
+        return s
 
-    def save_telemetry(self, telemetry_rows: list[PerfMetric]):
-        self.db.add_all(telemetry_rows)
+    def close(self, session_id: int) -> None:
+        s = self.db.get(Session, session_id)
+        if s is not None:
+            s.end_time = datetime.now(timezone.utc)
+            self.db.commit()
+
+    def save_telemetry(self, rows: list[PerfMetric]) -> None:
+        self.db.add_all(rows)
         self.db.commit()
+
 
 class AlertRepo:
-    """Handles CRUD operations for driver alerts"""
     def __init__(self, db):
         self.db = db
 
-    def save_alert(self, alert: Alert):
+    def save(self, alert: Alert) -> Alert:
         self.db.add(alert)
         self.db.commit()
+        return alert
 
-    def list_by_session(self, session_id: int):
-        return self.db.query(Alert).filter(Alert.session_id == session_id).all()
+    def list(self, session_id: int) -> list[Alert]:
+        return list(self.db.scalars(select(Alert).where(Alert.session_id == session_id)))
+
 
 class EvalRepo:
-    """Handles CRUD operations for model evaluation runs"""
-    def __init__(self,db):
-        self.db = db
-
-    def save(self, run):
-        self.db.add(run)
-        self.db.commit()
-
-    def get(self,  run_id: str):
-        #Need EvalRun Model
-        pass
-
-class ModelRegistry:
-    """Manages registered model versions and their approval status."""
     def __init__(self, db):
         self.db = db
 
-    def register(self, model):
+    def save(self, run: EvalRun) -> EvalRun:
+        self.db.add(run)
+        self.db.commit()
+        return run
+
+    def get(self, run_id: int) -> EvalRun | None:
+        return self.db.get(EvalRun, run_id)
+
+
+class ModelRegistry:
+    def __init__(self, db):
+        self.db = db
+
+    def register(self, model: ModelVersion) -> ModelVersion:
         self.db.add(model)
         self.db.commit()
+        return model
 
-    def get_approved(self):
-        #Update
-        pass
+    def get_approved(self) -> ModelVersion | None:
+        stmt = (select(ModelVersion).where(ModelVersion.approved.is_(True))
+                .order_by(ModelVersion.created_at.desc()))
+        return self.db.scalars(stmt).first()
 
-    def set_status(self, model_id: int, status: str):
-        #Update
-        pass
+    def set_status(self, model_id: int, approved: bool) -> None:
+        m = self.db.get(ModelVersion, model_id)
+        if m is None:
+            raise KeyError(f"model {model_id} not registered")
+        m.approved = approved
+        self.db.commit()
