@@ -4,6 +4,7 @@ Baseline CNN:  python scripts/export_onnx.py cnn --weights models/baseline_cnn.p
 YOLO detector: python scripts/export_onnx.py yolo --weights runs/detect/train/weights/best.pt --imgsz 640 [--half]
 """
 import argparse
+from pathlib import Path
 
 import numpy as np
 
@@ -24,6 +25,13 @@ def export_cnn(weights: str, out: str):
     got = ort.InferenceSession(out, providers=["CPUExecutionProvider"]).run(None, {"input": dummy.numpy()})[0]
     print(f"exported {out}; max |torch - onnx| = {np.abs(ref - got).max():.2e}")
     assert np.allclose(ref, got, atol=1e-4)
+    # PyTorch 2.x's exporter writes the weights to a separate "<out>.data" file. Merge them back
+    # so the model is ONE self-contained file (safe to commit, share, and COPY into Docker).
+    import onnx
+    merged = onnx.load(out)  # also reads <out>.data if it exists
+    onnx.save(merged, out)
+    Path(out + ".data").unlink(missing_ok=True)
+    print(f"saved self-contained {out} ({Path(out).stat().st_size / 1e6:.1f} MB)")
 
 
 def export_yolo(weights: str, imgsz: int, half: bool):
