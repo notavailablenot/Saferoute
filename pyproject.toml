@@ -13,7 +13,8 @@ dependencies = [
     "PyQt6",
     "SQLAlchemy",
     "onnxruntime",
-    "albumentations" 
+    "albumentations",
+    "imagehash"
 ]
 
 [project.optional-dependencies]
