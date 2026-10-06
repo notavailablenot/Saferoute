@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from .models import Base, Session, Alert, PerfMetric
 
 #Create SQLite Engine
-engine = create_engine("sqlite:///saferoute.db", connects_args={"check_same_thread": False})
+engine = create_engine("sqlite:///saferoute.db", connect_args={"check_same_thread": False})
 
 #Enable WAL mode and optimize synchronization on connection
 @event.listens_for(engine, "connect")
