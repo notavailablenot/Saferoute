@@ -39,7 +39,7 @@ def extract_frames(video_path: str,
             break
 
         if frame_count % frame_interval == 0:
-            pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BG2BGR))
+            pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
             current_hash = imagehash.phash(pil_img)
 
             if last_hash is None or (current_hash - last_hash) > hash_threshold:
