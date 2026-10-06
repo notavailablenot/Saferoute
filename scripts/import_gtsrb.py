@@ -1,8 +1,8 @@
-"""Build the 16-class SafeRoute *crop classifier* dataset from GTSRB (proposal Section 6.1).
+"""Build the 10-class SafeRoute *crop classifier* dataset from GTSRB (proposal Section 6.1).
 
 GTSRB (German Traffic Sign Recognition Benchmark) is already cropped, so it feeds the
-baseline CNN directly. Only GTSRB classes that match a SafeRoute class are kept; the 6
-SafeRoute classes with no GTSRB equivalent stay empty until Philippine photos are added.
+baseline CNN directly. Only the 10 GTSRB classes that match a SafeRoute class are kept.
+(The 6 proposal classes with no GTSRB equivalent are out of scope.)
 
 Leakage control: GTSRB "Training" images come in *tracks* of ~30 frames of the SAME physical
 sign. We hold out whole tracks for validation (never single frames). GTSRB "Final_Test"

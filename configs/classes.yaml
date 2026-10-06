@@ -1,19 +1,17 @@
-# SafeRoute-PH tentative taxonomy (Proposal Section 2.1). Index order MUST match data.yaml for YOLO.
-# tier: 1 = critical regulatory, 2 = speed limit, 3 = prohibitory / warning
+# SafeRoute class taxonomy (final scope: 10 classes).
+# Index order is the contract shared by the CNN, ONNX export and the API.
+# tier: 1 = critical regulatory, 2 = speed limit, 3 = warning
+# Data source: GTSRB (scripts/import_gtsrb.py). The 6 classes from the original 16-class
+# proposal with no public data (SPEED_LIMIT_40, NO_LEFT_TURN, NO_RIGHT_TURN, NO_U_TURN,
+# NO_PARKING, NO_LOADING_UNLOADING) are out of scope.
 classes:
-  0:  {name: STOP,                tier: 1}
-  1:  {name: YIELD,               tier: 1}
-  2:  {name: NO_ENTRY,            tier: 1}
-  3:  {name: SPEED_LIMIT_20,      tier: 2}
-  4:  {name: SPEED_LIMIT_30,      tier: 2}
-  5:  {name: SPEED_LIMIT_40,      tier: 2}
-  6:  {name: SPEED_LIMIT_60,      tier: 2}
-  7:  {name: SPEED_LIMIT_80,      tier: 2}
-  8:  {name: SPEED_LIMIT_100,     tier: 2}
-  9:  {name: NO_LEFT_TURN,        tier: 3}
-  10: {name: NO_RIGHT_TURN,       tier: 3}
-  11: {name: NO_U_TURN,           tier: 3}
-  12: {name: NO_PARKING,          tier: 3}
-  13: {name: PEDESTRIAN_CROSSING, tier: 3}
-  14: {name: SCHOOL_ZONE,         tier: 3}
-  15: {name: NO_LOADING_UNLOADING, tier: 3}
+  0: {name: STOP,                tier: 1}
+  1: {name: YIELD,               tier: 1}
+  2: {name: NO_ENTRY,            tier: 1}
+  3: {name: SPEED_LIMIT_20,      tier: 2}
+  4: {name: SPEED_LIMIT_30,      tier: 2}
+  5: {name: SPEED_LIMIT_60,      tier: 2}
+  6: {name: SPEED_LIMIT_80,      tier: 2}
+  7: {name: SPEED_LIMIT_100,     tier: 2}
+  8: {name: PEDESTRIAN_CROSSING, tier: 3}
+  9: {name: SCHOOL_ZONE,         tier: 3}

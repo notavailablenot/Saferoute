@@ -18,7 +18,7 @@ def export_cnn(weights: str, out: str):
     model.load_state_dict(ckpt["state_dict"])
     model.eval()
     dummy = torch.randn(1, 3, 64, 64)
-    torch.onnx.export(model, dummy, out, input_names=["input"], output_names=["logits"], opset_version=17)
+    torch.onnx.export(model, dummy, out, input_names=["input"], output_names=["logits"], opset_version=18)
     # parity check: ONNX output must match PyTorch
     ref = model(dummy).detach().numpy()
     got = ort.InferenceSession(out, providers=["CPUExecutionProvider"]).run(None, {"input": dummy.numpy()})[0]
@@ -28,7 +28,7 @@ def export_cnn(weights: str, out: str):
 
 def export_yolo(weights: str, imgsz: int, half: bool):
     from ultralytics import YOLO
-    path = YOLO(weights).export(format="onnx", imgsz=imgsz, opset=17, simplify=True, half=half)
+    path = YOLO(weights).export(format="onnx", imgsz=imgsz, simplify=True, half=half)
     print(f"exported {path}")
 
 

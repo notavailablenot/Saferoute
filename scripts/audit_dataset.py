@@ -5,7 +5,7 @@ malformed lines, invalid class IDs, boxes outside [0, 1], tiny boxes, and the
 per-split class distribution. Writes a JSON report and exits non-zero on hard errors.
 
 Usage:
-    python scripts/audit_dataset.py --root data/processed/saferoute_ph --num-classes 16 \
+    python scripts/audit_dataset.py --root data/processed/saferoute_ph --num-classes 10 \
         --out reports/dataset_audit.json
 """
 import argparse
@@ -82,7 +82,7 @@ def audit(root: Path, num_classes: int, min_box_px: int = 12) -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, required=True)
-    ap.add_argument("--num-classes", type=int, default=16)
+    ap.add_argument("--num-classes", type=int, default=10)
     ap.add_argument("--min-box-px", type=int, default=12)
     ap.add_argument("--out", type=Path, default=Path("reports/dataset_audit.json"))
     a = ap.parse_args(argv)

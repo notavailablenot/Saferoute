@@ -11,8 +11,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _tiny_classifier(path: Path, n_classes: int = 16):
-    """Stand-in ONNX model with the same I/O contract as the baseline CNN: [1,3,64,64] -> [1,16]."""
+def _tiny_classifier(path: Path, n_classes: int = 10):
+    """Stand-in ONNX model with the same I/O contract as the baseline CNN: [1,3,64,64] -> [1,10]."""
     w = numpy_helper.from_array(np.random.rand(3, n_classes).astype(np.float32), "W")
     g = helper.make_graph(
         [helper.make_node("GlobalAveragePool", ["input"], ["gap"]),
@@ -43,7 +43,7 @@ def test_predict_with_model(tmp_path, monkeypatch):
     _tiny_classifier(tmp_path / "m.onnx")
     with _client(monkeypatch, tmp_path / "m.onnx") as c:
         h = c.get("/health").json()
-        assert h["status"] == "ready" and h["num_classes"] == 16
+        assert h["status"] == "ready" and h["num_classes"] == 10
         r = c.post("/predict/image", files={"file": ("s.png", _png(), "image/png")})
         assert r.status_code == 200
         body = r.json()

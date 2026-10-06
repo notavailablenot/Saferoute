@@ -1,0 +1,36 @@
+{
+  "splits": {
+    "train": {
+      "images": 705,
+      "background_images": 55,
+      "instances": 782,
+      "per_class": {
+        "0": 782
+      }
+    },
+    "val": {
+      "images": 147,
+      "background_images": 7,
+      "instances": 182,
+      "per_class": {
+        "0": 182
+      }
+    },
+    "test": {
+      "images": 159,
+      "background_images": 13,
+      "instances": 185,
+      "per_class": {
+        "0": 185
+      }
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "data/processed/signs_v0/labels/train/Placa367_E1_jpg.txt:2 box smaller than 12px",
+    "data/processed/signs_v0/labels/train/Placa444_D1_jpg.txt:2 box smaller than 12px",
+    "data/processed/signs_v0/labels/train/Placa544_D1_jpg.txt:2 box smaller than 12px",
+    "data/processed/signs_v0/labels/train/Placa625_D1_jpg.txt:2 box smaller than 12px",
+    "data/processed/signs_v0/labels/val/Placa79_D1_jpg.txt:2 box smaller than 12px"
+  ]
+}
