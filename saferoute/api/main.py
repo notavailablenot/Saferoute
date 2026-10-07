@@ -45,7 +45,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost", "http://12
                    allow_methods=["*"], allow_headers=["*"])
 
 #sessions update
-SessionFactory = init_db
+SessionFactory = init_db()
 
 def get_db():
     """Dependencies to yield a database session per request"""
