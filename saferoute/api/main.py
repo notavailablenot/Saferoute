@@ -1,4 +1,3 @@
-#############-New updates
 """SafeRoute Logic Tier: FastAPI service (Sprint 1 endpoints).
 
 Run:  uvicorn saferoute.api.main:app --host 127.0.0.1 --port 8000
@@ -10,10 +9,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import yaml
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from saferoute.vision.classifier_engine import ClassifierEngine
+from saferoute.data_access.repositories import SessionRepo, init_db
 
 MODEL_PATH = Path(os.getenv("SAFEROUTE_CLS_MODEL", "models/baseline_cnn.onnx"))
 CLASSES_YAML = Path(os.getenv("SAFEROUTE_CLASSES", "configs/classes.yaml"))
@@ -43,6 +44,16 @@ app = FastAPI(title="SafeRoute Inference API", version="0.1.0", lifespan=lifespa
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost", "http://127.0.0.1"],
                    allow_methods=["*"], allow_headers=["*"])
 
+#sessions update
+SessionFactory = init_db
+
+def get_db():
+    """Dependencies to yield a database session per request"""
+    with SessionFactory() as db:
+        yield db
+
+class SessionCreate(BaseModel): 
+    model_version: str
 
 @app.get("/health")
 def health():
@@ -76,40 +87,15 @@ async def predict_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"could not process image: {exc}") from exc
     result["api_ms"] = round((time.perf_counter() - t0) * 1000, 3)
     return result
-######################-Old
-#from fastapi import FastAPI, Depends
-#from pydantic import BaseModel
-#from saferoute.data_access.repositories import SessionRepo, SessionLocal
 
-# Initialize the FastAPI application
-#app = FastAPI(title="SafeRoute API", version="0.1.0")
+@app.post("/sessions")
+def create_session(data: SessionCreate, db = Depends(get_db)):
+    """Stub endpoint: Starts a driving session in the database"""
+    repo = SessionRepo(db)
+    new_session = repo.create(model_version=data.model_version)
 
-# Database dependency
-#def get_db():
-#    db = SessionLocal()
-#    try:
-#        yield db
-#    finally:
-#        db.close()
-
-# Pydantic schema for incoming request validation
-#class SessionCreate(BaseModel):
-#    model_version: str
-
-#@app.get("/health")
-#def health_check():
-#    """Basic health check to ensure the API is running."""
-#    return {"status": "ok", "message": "SafeRoute backend is online."}
-
-#@app.post("/sessions")
-#def create_session(session_data: SessionCreate, db = Depends(get_db)):
-#    """Creates a new driving session in the SQLite database."""
-#    repo = SessionRepo(db)
-#    new_session = repo.create_session(model_version=session_data.model_version)
-    
-#    return {
-#        "session_id": new_session.id, 
-#        "model_version": new_session.model_version,
-#        "status": "Session successfully created in WAL mode."
-#    }
-#############################
+    return {
+        "Status": "Session started",
+        "session_id": new_session.id,
+        "model_version": new_session.model_version
+    }
