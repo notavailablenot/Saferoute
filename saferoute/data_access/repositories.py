@@ -9,10 +9,8 @@ from .models import Alert, Base, EvalRun, ModelVersion, PerfMetric, Session
 
 DB_URL = os.getenv("SAFEROUTE_DB_URL", "sqlite:///saferoute.db")
 
-
 def make_engine(url: str = DB_URL):
     engine = create_engine(url, connect_args={"check_same_thread": False})
-
     @event.listens_for(engine, "connect")
     def _sqlite_pragmas(dbapi_conn, _record):
         cur = dbapi_conn.cursor()

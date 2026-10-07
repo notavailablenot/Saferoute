@@ -9,10 +9,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import yaml
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from saferoute.vision.classifier_engine import ClassifierEngine
+from saferoute.data_access.repositories import SessionRepo, init_db
 
 MODEL_PATH = Path(os.getenv("SAFEROUTE_CLS_MODEL", "models/baseline_cnn.onnx"))
 CLASSES_YAML = Path(os.getenv("SAFEROUTE_CLASSES", "configs/classes.yaml"))
@@ -42,6 +44,16 @@ app = FastAPI(title="SafeRoute Inference API", version="0.1.0", lifespan=lifespa
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost", "http://127.0.0.1"],
                    allow_methods=["*"], allow_headers=["*"])
 
+#sessions update
+SessionFactory = init_db()
+
+def get_db():
+    """Dependencies to yield a database session per request"""
+    with SessionFactory() as db:
+        yield db
+
+class SessionCreate(BaseModel): 
+    model_version: str
 
 @app.get("/health")
 def health():
@@ -75,3 +87,15 @@ async def predict_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"could not process image: {exc}") from exc
     result["api_ms"] = round((time.perf_counter() - t0) * 1000, 3)
     return result
+
+@app.post("/sessions")
+def create_session(data: SessionCreate, db = Depends(get_db)):
+    """Stub endpoint: Starts a driving session in the database"""
+    repo = SessionRepo(db)
+    new_session = repo.create(model_version=data.model_version)
+
+    return {
+        "Status": "Session started",
+        "session_id": new_session.id,
+        "model_version": new_session.model_version
+    }
