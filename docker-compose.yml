@@ -1,0 +1,21 @@
+# Backend only. The PyQt6 GUI runs natively so it can open the webcam and show a window.
+#   docker compose up -d --build      start (first build needs internet, later runs are offline)
+#   docker compose ps                 shows "healthy" once the models are loaded
+#   docker compose logs -f api        request log
+#   docker compose down               stop
+services:
+  api:
+    build: .
+    image: saferoute-api:1.0
+    container_name: saferoute-api
+    ports:
+      - "127.0.0.1:8000:8000"   # localhost only: not reachable from the network
+    environment:
+      SAFEROUTE_MIN_CLS_CONF: "0.8"
+      SAFEROUTE_DET_CONF: "0.35"
+    volumes:
+      - saferoute-db:/app/db
+    restart: unless-stopped
+
+volumes:
+  saferoute-db:
