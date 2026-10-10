@@ -133,7 +133,7 @@ def eval_cascade(a):
     cas = SignCascade(None, ClassifierEngine(Path(a.cls_model), names), {}, min_cls_conf=a.min_cls_conf)
     rows = list(csv.DictReader(open(a.labels)))
     assert rows, f"no rows in {a.labels}"
-    y_true, y_pred, raw_correct, abstain = [], [], 0, 0
+    y_true, y_pred, raw_correct, abstain, rejected = [], [], 0, 0, 0
     for r in rows:
         if r["label"] == "SKIP":
             continue
@@ -147,14 +147,17 @@ def eval_cascade(a):
             p = cas.classifier.predict_array(crop)
             raw = p["label"]
             pred = raw if p["confidence"] >= a.min_cls_conf else GENERIC
+            if raw == "NOT_SIGN":  # rejected by the classifier: no alert at all
+                pred = GENERIC
+                rejected += 1
         abstain += pred == GENERIC
         raw_correct += raw == r["label"]
         y_true.append(r["label"])
         y_pred.append(OTHER if pred == GENERIC else pred)
-    rep = classification_report(y_true, y_pred, names + [OTHER])
+    rep = classification_report(y_true, y_pred, [n for n in names if n != "NOT_SIGN"] + [OTHER])
     known = [i for i, t in enumerate(y_true) if t != OTHER]
     rep.update(min_classifier_conf=a.min_cls_conf, crops=len(y_true),
-               in_taxonomy=len(known), generic_rate=round(abstain / max(len(y_true), 1), 4),
+               in_taxonomy=len(known), rejected_as_not_sign=rejected, generic_rate=round(abstain / max(len(y_true), 1), 4),
                accuracy_in_taxonomy=round(
                    sum(1 for i in known if y_pred[i] == y_true[i]) / max(len(known), 1), 4),
                raw_classifier_accuracy_without_threshold=round(raw_correct / max(len(known), 1), 4))

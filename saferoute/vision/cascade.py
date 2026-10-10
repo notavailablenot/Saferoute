@@ -4,6 +4,10 @@ Every detector box is cropped (with a small margin) and classified. When the cla
 is not confident enough (domain gap: it was trained on GTSRB crops), the sign is reported
 with the generic label SIGN instead of a possibly wrong class, so the driver still gets a
 "Sign ahead" warning without a misleading value.
+
+Rejection (Sprint 2): the classifier also has a NOT_SIGN class trained on hard negatives
+(scripts/make_negative_crops.py). Detector boxes it labels NOT_SIGN (billboards, trees, ...)
+are dropped, so they never reach the tracker or raise an alert.
 """
 import time
 
@@ -13,6 +17,7 @@ from saferoute.vision.classifier_engine import ClassifierEngine
 from saferoute.vision.detector_engine import DetectorEngine
 
 GENERIC = "SIGN"
+REJECT = "NOT_SIGN"
 
 
 class SignCascade:
@@ -40,7 +45,7 @@ class SignCascade:
         t0 = time.perf_counter()
         dets, det_ms = self.detector.detect(bgr)
         cls_ms = 0.0
-        out = []
+        out, rejected = [], 0
         for d in dets:
             crop = self.crop(bgr, d["box"])
             if crop is None:  # too small to classify reliably: keep as a generic sign
@@ -49,10 +54,13 @@ class SignCascade:
                 p = self.classifier.predict_array(crop)
                 cls_ms += p["inference_ms"]
                 label, cconf, top = p["label"], p["confidence"], p["top_k"]
+                if label == REJECT:  # classifier says this is not a traffic sign
+                    rejected += 1
+                    continue
                 if cconf < self.min_cls_conf:
                     label = GENERIC
             out.append({**d, "label": label, "cls_conf": round(float(cconf), 4),
                         "raw_label": top[0]["label"] if top else None,
                         "tier": self.tiers.get(label, 3)})
-        return {"detections": out, "detect_ms": round(det_ms, 3), "classify_ms": round(cls_ms, 3),
+        return {"detections": out, "rejected": rejected, "detect_ms": round(det_ms, 3), "classify_ms": round(cls_ms, 3),
                 "pipeline_ms": round((time.perf_counter() - t0) * 1000, 3)}

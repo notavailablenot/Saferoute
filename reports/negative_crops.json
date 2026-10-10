@@ -1,0 +1,20 @@
+{
+  "train": {
+    "images": 705,
+    "hard_negatives": 171,
+    "random_negatives": 1410,
+    "total": 1581
+  },
+  "val": {
+    "images": 147,
+    "hard_negatives": 46,
+    "random_negatives": 294,
+    "total": 340
+  },
+  "test": {
+    "images": 159,
+    "hard_negatives": 56,
+    "random_negatives": 318,
+    "total": 374
+  }
+}

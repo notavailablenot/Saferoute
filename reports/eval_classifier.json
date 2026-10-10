@@ -1,15 +1,15 @@
 {
-  "n": 3870,
-  "accuracy": 0.9762,
+  "n": 4244,
+  "accuracy": 0.9644,
   "macro": {
-    "precision": 0.9855,
-    "recall": 0.9765,
-    "f1": 0.9807
+    "precision": 0.9734,
+    "recall": 0.9651,
+    "f1": 0.9683
   },
   "weighted": {
-    "precision": 0.9769,
-    "recall": 0.9762,
-    "f1": 0.9762
+    "precision": 0.9666,
+    "recall": 0.9644,
+    "f1": 0.9646
   },
   "per_class": {
     "STOP": {
@@ -19,45 +19,45 @@
       "support": 270
     },
     "YIELD": {
-      "precision": 0.9549,
-      "recall": 1.0,
-      "f1": 0.9769,
+      "precision": 0.9972,
+      "recall": 0.9917,
+      "f1": 0.9944,
       "support": 720
     },
     "NO_ENTRY": {
       "precision": 1.0,
-      "recall": 0.9167,
-      "f1": 0.9565,
+      "recall": 0.8694,
+      "f1": 0.9302,
       "support": 360
     },
     "SPEED_LIMIT_20": {
       "precision": 1.0,
-      "recall": 0.9667,
-      "f1": 0.9831,
+      "recall": 0.95,
+      "f1": 0.9744,
       "support": 60
     },
     "SPEED_LIMIT_30": {
-      "precision": 0.9944,
-      "recall": 0.9917,
-      "f1": 0.993,
+      "precision": 0.9903,
+      "recall": 0.9903,
+      "f1": 0.9903,
       "support": 720
     },
     "SPEED_LIMIT_60": {
-      "precision": 0.9687,
-      "recall": 0.9622,
-      "f1": 0.9654,
+      "precision": 0.9882,
+      "recall": 0.9311,
+      "f1": 0.9588,
       "support": 450
     },
     "SPEED_LIMIT_80": {
-      "precision": 0.9417,
-      "recall": 0.9746,
-      "f1": 0.9579,
+      "precision": 0.9084,
+      "recall": 0.9603,
+      "f1": 0.9336,
       "support": 630
     },
     "SPEED_LIMIT_100": {
-      "precision": 0.9954,
-      "recall": 0.9533,
-      "f1": 0.9739,
+      "precision": 0.9525,
+      "recall": 0.9356,
+      "f1": 0.9439,
       "support": 450
     },
     "PEDESTRIAN_CROSSING": {
@@ -68,9 +68,15 @@
     },
     "SCHOOL_ZONE": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9933,
+      "f1": 0.9967,
       "support": 150
+    },
+    "NOT_SIGN": {
+      "precision": 0.8712,
+      "recall": 0.9947,
+      "f1": 0.9288,
+      "support": 374
     }
   },
   "labels": [
@@ -83,7 +89,8 @@
     "SPEED_LIMIT_80",
     "SPEED_LIMIT_100",
     "PEDESTRIAN_CROSSING",
-    "SCHOOL_ZONE"
+    "SCHOOL_ZONE",
+    "NOT_SIGN"
   ],
   "confusion_matrix": [
     [
@@ -96,38 +103,42 @@
       0,
       0,
       0,
-      0
-    ],
-    [
-      0,
-      720,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
       0,
       0
     ],
     [
       0,
-      30,
-      330,
+      714,
       0,
       0,
       0,
       0,
       0,
       0,
-      0
+      0,
+      0,
+      6
+    ],
+    [
+      0,
+      0,
+      313,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      47
     ],
     [
       0,
       0,
       0,
-      58,
-      2,
+      57,
+      3,
+      0,
       0,
       0,
       0,
@@ -139,36 +150,13 @@
       1,
       0,
       0,
-      714,
+      713,
       0,
-      3,
-      2,
-      0,
-      0
-    ],
-    [
-      0,
-      3,
+      1,
+      4,
       0,
       0,
-      0,
-      433,
-      14,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      2,
-      14,
-      614,
-      0,
-      0,
-      0
+      1
     ],
     [
       0,
@@ -176,9 +164,36 @@
       0,
       0,
       0,
+      419,
+      30,
       0,
-      21,
-      429,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      4,
+      5,
+      605,
+      16,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      29,
+      421,
+      0,
       0,
       0
     ],
@@ -192,6 +207,7 @@
       0,
       0,
       60,
+      0,
       0
     ],
     [
@@ -201,15 +217,29 @@
       0,
       0,
       0,
+      1,
+      0,
+      0,
+      149,
+      0
+    ],
+    [
+      0,
+      1,
       0,
       0,
       0,
-      150
+      0,
+      0,
+      1,
+      0,
+      0,
+      372
     ]
   ],
   "model": "models/baseline_cnn.onnx",
-  "model_sha256": "5e1c80aae27f2a61a85645d8c95ce6609e331b6fd749972b458cd57d3b1fc9c0",
+  "model_sha256": "a697b52f07242aaee34b1eb42bf5b9f37280ea59f018de099ce162e8a40ddbac",
   "provider": "CPUExecutionProvider",
   "split": "data/processed/crops/test",
-  "mean_inference_ms": 0.662
+  "mean_inference_ms": 0.733
 }

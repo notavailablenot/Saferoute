@@ -1,6 +1,6 @@
 # SafeRoute class taxonomy (final scope: 10 classes).
 # Index order is the contract shared by the CNN, ONNX export and the API.
-# tier: 1 = critical regulatory, 2 = speed limit, 3 = warning
+# tier: 1 = critical regulatory, 2 = speed limit, 3 = warning, 0 = no alert
 # Data source: GTSRB (scripts/import_gtsrb.py). The 6 classes from the original 16-class
 # proposal with no public data (SPEED_LIMIT_40, NO_LEFT_TURN, NO_RIGHT_TURN, NO_U_TURN,
 # NO_PARKING, NO_LOADING_UNLOADING) are out of scope.
@@ -15,3 +15,7 @@ classes:
   7: {name: SPEED_LIMIT_100,     tier: 2}
   8: {name: PEDESTRIAN_CROSSING, tier: 3}
   9: {name: SCHOOL_ZONE,         tier: 3}
+  # Rejection class (Sprint 2): crops of things that are NOT traffic signs (billboards, trees,
+  # buildings, detector false positives). Built by scripts/make_negative_crops.py from the
+  # PauloLab photos. When the classifier picks it, the detection is dropped and no alert is issued.
+  10: {name: NOT_SIGN,            tier: 0}

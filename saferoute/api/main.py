@@ -68,7 +68,7 @@ def load_classes(path: Path) -> tuple[list[str], dict[str, int]]:
     names = [data[k]["name"] for k in keys]
     tiers = {data[k]["name"]: int(data[k].get("tier", 3)) for k in keys}
     tiers[GENERIC] = 3
-    return names, tiers
+    return names, tiers  # names include the NOT_SIGN rejection class (tier 0, never alerted)
 
 
 @asynccontextmanager
@@ -211,7 +211,7 @@ async def detect_image(file: UploadFile = File(...),
     log.info("detect session=%s signs=%d alerts=%d api_ms=%.1f", session_id,
              len(result["detections"]), len(alerts), api_ms)
     return {"image": {"width": int(img.shape[1]), "height": int(img.shape[0])},
-            "detections": result["detections"], "alerts": alerts,
+            "detections": result["detections"], "rejected": result.get("rejected", 0), "alerts": alerts,
             "timings": {"detect_ms": result["detect_ms"], "classify_ms": result["classify_ms"],
                         "pipeline_ms": result["pipeline_ms"], "api_ms": api_ms}}
 
