@@ -38,13 +38,22 @@ class ClassifierEngine:
         if isinstance(n_out, int) and n_out != len(class_names):
             raise ValueError(f"model outputs {n_out} classes but {len(class_names)} names were given")
 
-    def preprocess(self, image_bytes: bytes) -> np.ndarray:
-        im = Image.open(io.BytesIO(image_bytes)).convert("RGB").resize((self.img_size, self.img_size))
+    def _to_tensor(self, im: Image.Image) -> np.ndarray:
+        im = im.convert("RGB").resize((self.img_size, self.img_size))
         x = (np.asarray(im, dtype=np.float32) / 255.0 - MEAN) / STD
         return x.transpose(2, 0, 1)[None]  # NCHW, batch of 1
 
+    def preprocess(self, image_bytes: bytes) -> np.ndarray:
+        return self._to_tensor(Image.open(io.BytesIO(image_bytes)))
+
+    def predict_array(self, rgb: np.ndarray, top_k: int = 3) -> dict:
+        """Classify an RGB uint8 crop (H x W x 3), e.g. a detector box cut from a frame."""
+        return self._run(self._to_tensor(Image.fromarray(rgb)), top_k)
+
     def predict(self, image_bytes: bytes, top_k: int = 3) -> dict:
-        x = self.preprocess(image_bytes)
+        return self._run(self.preprocess(image_bytes), top_k)
+
+    def _run(self, x: np.ndarray, top_k: int) -> dict:
         t0 = time.perf_counter()
         logits = self.session.run(None, {self.input_name: x})[0][0]
         infer_ms = (time.perf_counter() - t0) * 1000
