@@ -8,7 +8,8 @@ Tabs
   Drive  (UC-01): webcam or video file -> frames sent to POST /detect/image?session_id=...
                   -> boxes drawn on the exact frame, one alert per sign, speed-limit badge,
                   audio cue, per-second telemetry posted back to the API.
-  Image  (upload): pick a JPEG/PNG -> POST /detect/image -> boxes and a results table.
+  Image  (upload): UploadTab (upload_tab.py): pick a JPEG/PNG -> POST /detect/image -> boxes,
+                  labels and timings. Red Banner (banners.py) when the backend is offline.
 
 Threads: capture + HTTP run in FrameWorker (QThread) and the health check in HealthWorker,
 so the UI thread never blocks (Qt signals carry results back to the UI).
@@ -24,12 +25,14 @@ import cv2
 import numpy as np
 from PyQt6.QtCore import QThread, QTimer, QUrl, Qt, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QImage, QPixmap
-from PyQt6.QtWidgets import (QApplication, QCheckBox, QFileDialog, QHBoxLayout, QHeaderView,
+from PyQt6.QtWidgets import (QApplication, QCheckBox, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QPushButton, QSpinBox,
-                             QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
+                             QTabWidget, QVBoxLayout, QWidget)
 
 from saferoute.gui.api_client import DEFAULT_URL, ApiClient
+from saferoute.gui.banners import CAMERA_DISCONNECTED, Banner
 from saferoute.gui.qt_env import fix_qt_env
+from saferoute.gui.upload_tab import UploadTab
 from saferoute.gui.overlay import (TIER_COLORS, alert_text, draw_detections, pretty,
                                    scale_detections, speed_value)
 
@@ -224,9 +227,7 @@ class DriveTab(QWidget):
         self.session_id: int | None = None
         self.audio = AudioCues()
 
-        self.banner = QLabel("")
-        self.banner.setVisible(False)
-        self.banner.setStyleSheet("background:#b00020; color:white; font-weight:bold; padding:6px;")
+        self.banner = Banner()
         self.video = VideoLabel("Choose a source: Webcam or Video file")
 
         self.btn_cam = QPushButton("Start webcam")
@@ -358,75 +359,20 @@ class DriveTab(QWidget):
 
     def on_status(self, kind, msg):
         if kind == "ok":
-            self.banner.setVisible(False)
+            self.banner.clear()
         else:
             self.show_banner(msg)
 
     def on_ended(self, msg):
-        if "disconnected" in msg.lower() or "could not" in msg.lower():
+        if "disconnected" in msg.lower():
+            self.show_banner(CAMERA_DISCONNECTED)
+        elif "could not" in msg.lower():
             self.show_banner(msg)
         self.win.statusBar().showMessage(msg, 8000)
         self.stop()
 
     def show_banner(self, msg):
-        self.banner.setText(msg)
-        self.banner.setVisible(True)
-
-
-class ImageTab(QWidget):
-    def __init__(self, win: "MainWindow"):
-        super().__init__()
-        self.win = win
-        self.btn = QPushButton("Upload image (JPEG / PNG)")
-        self.btn.clicked.connect(self.open_image)
-        self.info = QLabel("")
-        self.view = VideoLabel("Upload an image to run the detector + classifier cascade")
-        self.table = QTableWidget(0, 5)
-        self.table.setHorizontalHeaderLabels(["Sign", "Classifier conf.", "Detector conf.", "Tier", "Box (x1, y1, x2, y2)"])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table.setMaximumHeight(180)
-        top = QHBoxLayout()
-        top.addWidget(self.btn)
-        top.addWidget(self.info, 1)
-        root = QVBoxLayout(self)
-        root.addLayout(top)
-        root.addWidget(self.view, 1)
-        root.addWidget(self.table)
-
-    def open_image(self):
-        path, _ = QFileDialog.getOpenFileName(self, "Open image", "", "Images (*.jpg *.jpeg *.png)")
-        if path:
-            self.run_image(path)
-
-    def run_image(self, path: str):
-        data = Path(path).read_bytes()
-        ctype = "image/png" if path.lower().endswith(".png") else "image/jpeg"
-        frame = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
-        if frame is None:
-            self.info.setText("Could not read this image file")
-            return
-        t0 = time.perf_counter()
-        try:
-            res = self.win.api.detect(data, None, Path(path).name, ctype)
-        except Exception as exc:
-            self.info.setText(f"Request failed: {exc}")
-            self.view.set_frame(frame)
-            return
-        rt = (time.perf_counter() - t0) * 1000
-        self.show_result(frame, res, rt)
-
-    def show_result(self, frame, res: dict, round_trip_ms: float):
-        dets = res["detections"]
-        self.view.set_frame(draw_detections(frame, dets, show_track=False))
-        t = res["timings"]
-        self.info.setText(f"{len(dets)} sign(s) | detector {t['detect_ms']:.1f} ms | classifier "
-                          f"{t['classify_ms']:.1f} ms | API {t['api_ms']:.1f} ms | round trip {round_trip_ms:.1f} ms")
-        self.table.setRowCount(len(dets))
-        for i, d in enumerate(dets):
-            vals = [pretty(d["label"]), f"{d['cls_conf']:.3f}", f"{d['det_conf']:.3f}", str(d["tier"]),
-                    ", ".join(f"{v:.0f}" for v in d["box"])]
-            for j, v in enumerate(vals):
-                self.table.setItem(i, j, QTableWidgetItem(v))
+        self.banner.show_error(msg)
 
 
 class MainWindow(QMainWindow):
@@ -436,7 +382,7 @@ class MainWindow(QMainWindow):
         self.resize(1280, 760)
         self.api = ApiClient(api_url)
         self.drive = DriveTab(self)
-        self.image = ImageTab(self)
+        self.image = UploadTab(api_url, start_health=start_health)
         tabs = QTabWidget()
         tabs.addTab(self.drive, "Drive (live)")
         tabs.addTab(self.image, "Image upload")
@@ -473,6 +419,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, e):
         self.drive.stop()
+        self.image.health_timer.stop()
         self.health_worker.stop()
         self.health_worker.wait(2000)
         super().closeEvent(e)
