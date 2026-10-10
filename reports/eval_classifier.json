@@ -1,0 +1,215 @@
+{
+  "n": 3870,
+  "accuracy": 0.9762,
+  "macro": {
+    "precision": 0.9855,
+    "recall": 0.9765,
+    "f1": 0.9807
+  },
+  "weighted": {
+    "precision": 0.9769,
+    "recall": 0.9762,
+    "f1": 0.9762
+  },
+  "per_class": {
+    "STOP": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 270
+    },
+    "YIELD": {
+      "precision": 0.9549,
+      "recall": 1.0,
+      "f1": 0.9769,
+      "support": 720
+    },
+    "NO_ENTRY": {
+      "precision": 1.0,
+      "recall": 0.9167,
+      "f1": 0.9565,
+      "support": 360
+    },
+    "SPEED_LIMIT_20": {
+      "precision": 1.0,
+      "recall": 0.9667,
+      "f1": 0.9831,
+      "support": 60
+    },
+    "SPEED_LIMIT_30": {
+      "precision": 0.9944,
+      "recall": 0.9917,
+      "f1": 0.993,
+      "support": 720
+    },
+    "SPEED_LIMIT_60": {
+      "precision": 0.9687,
+      "recall": 0.9622,
+      "f1": 0.9654,
+      "support": 450
+    },
+    "SPEED_LIMIT_80": {
+      "precision": 0.9417,
+      "recall": 0.9746,
+      "f1": 0.9579,
+      "support": 630
+    },
+    "SPEED_LIMIT_100": {
+      "precision": 0.9954,
+      "recall": 0.9533,
+      "f1": 0.9739,
+      "support": 450
+    },
+    "PEDESTRIAN_CROSSING": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 60
+    },
+    "SCHOOL_ZONE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 150
+    }
+  },
+  "labels": [
+    "STOP",
+    "YIELD",
+    "NO_ENTRY",
+    "SPEED_LIMIT_20",
+    "SPEED_LIMIT_30",
+    "SPEED_LIMIT_60",
+    "SPEED_LIMIT_80",
+    "SPEED_LIMIT_100",
+    "PEDESTRIAN_CROSSING",
+    "SCHOOL_ZONE"
+  ],
+  "confusion_matrix": [
+    [
+      270,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      720,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      30,
+      330,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      58,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      714,
+      0,
+      3,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      3,
+      0,
+      0,
+      0,
+      433,
+      14,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      2,
+      14,
+      614,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      21,
+      429,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      60,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      150
+    ]
+  ],
+  "model": "models/baseline_cnn.onnx",
+  "model_sha256": "5e1c80aae27f2a61a85645d8c95ce6609e331b6fd749972b458cd57d3b1fc9c0",
+  "provider": "CPUExecutionProvider",
+  "split": "data/processed/crops/test",
+  "mean_inference_ms": 0.662
+}
