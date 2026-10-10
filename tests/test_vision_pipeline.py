@@ -94,3 +94,17 @@ def test_alerts_sorted_by_tier_and_class_vote():
                             _det((400, 0, 450, 50), label="STOP")])
     events = am.process(tracks, now=0)
     assert [e["tier"] for e in events] == [1, 2, 3]
+
+
+def test_static_overlay_never_alerts_but_moving_sign_does():
+    pipe = SessionPipeline(TIERS, cooldown_s=0, static_frames=15)
+    alerts = []
+    for i in range(30):  # a burned-in logo: identical box every frame, plus a sign that grows
+        overlay = _det((10, 10, 110, 50), label="STOP")
+        sign = _det((600 - 3 * i, 300 - 3 * i, 640 + 3 * i, 340 + 3 * i), label="SPEED_LIMIT_30")
+        _, a = pipe.step([overlay, sign], now=i * 0.07)
+        alerts += a
+    assert [a["label"] for a in alerts] == ["SPEED_LIMIT_30"]
+    assert pipe.static_regions  # the logo region is remembered for the session
+    dets, _ = pipe.step([_det((10, 10, 110, 50), label="STOP")], now=5.0)
+    assert dets == []  # later detections inside the overlay region are dropped
