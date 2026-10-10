@@ -1,4 +1,4 @@
-"""Sprint 1 baseline CNN for traffic-sign crop classification (10 SafeRoute classes).
+"""Baseline CNN for traffic-sign crop classification (10 SafeRoute classes + NOT_SIGN + OTHER_SIGN).
 
 Follows the Module 2 baseline: 3 blocks of Conv -> ReLU -> MaxPool (32 -> 64 -> 128 filters),
 then Flatten -> Linear -> ReLU -> Dropout -> Linear. The model returns raw logits; softmax is
@@ -11,8 +11,8 @@ Shape walk-through for a 64 x 64 RGB input (batch N):
     block3 (128)     N x 128 x 8  x 8
     flatten          N x 8192
     fc1 + dropout    N x 256
-    fc2 (logits)     N x 10
-Trainable parameters: 2,193,226 (conv 93,248 + fc 2,099,978).
+    fc2 (logits)     N x 12
+Trainable parameters: 2,193,740 (conv 93,248 + fc 2,100,492). Sprint 1 used 10 outputs (2,193,226).
 """
 import torch
 from torch import nn
@@ -27,7 +27,7 @@ def conv_block(c_in: int, c_out: int) -> nn.Sequential:
 
 
 class BaselineSignCNN(nn.Module):
-    def __init__(self, num_classes: int = 10, img_size: int = 64, dropout: float = 0.5):
+    def __init__(self, num_classes: int = 12, img_size: int = 64, dropout: float = 0.5):
         super().__init__()
         if img_size % 8:
             raise ValueError("img_size must be divisible by 8 (three 2x2 max-pools)")
@@ -54,8 +54,8 @@ if __name__ == "__main__":
         print(f"{name:10s} -> {tuple(x.shape)}")
     n = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"trainable parameters: {n:,}")
-    assert x.shape == (4, 10), "output must equal the number of classes"
-    assert n == 2_193_226
+    assert x.shape == (4, 12), "output must equal the number of classes"
+    assert n == 2_193_740
     try:
         from torchinfo import summary  # pip install torchinfo
         summary(model, input_size=(1, 3, 64, 64))

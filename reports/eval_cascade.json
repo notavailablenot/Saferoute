@@ -1,0 +1,247 @@
+{
+  "n": 140,
+  "accuracy": 0.6714,
+  "macro": {
+    "precision": 0.2384,
+    "recall": 0.1714,
+    "f1": 0.1622
+  },
+  "weighted": {
+    "precision": 0.4802,
+    "recall": 0.6714,
+    "f1": 0.5445
+  },
+  "per_class": {
+    "STOP": {
+      "precision": 1.0,
+      "recall": 0.2,
+      "f1": 0.3333,
+      "support": 5
+    },
+    "YIELD": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 2
+    },
+    "NO_ENTRY": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "SPEED_LIMIT_20": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "SPEED_LIMIT_30": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 8
+    },
+    "SPEED_LIMIT_60": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 10
+    },
+    "SPEED_LIMIT_80": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 3
+    },
+    "SPEED_LIMIT_100": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "PEDESTRIAN_CROSSING": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 19
+    },
+    "SCHOOL_ZONE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "OTHER": {
+      "precision": 0.6691,
+      "recall": 1.0,
+      "f1": 0.8017,
+      "support": 93
+    }
+  },
+  "labels": [
+    "STOP",
+    "YIELD",
+    "NO_ENTRY",
+    "SPEED_LIMIT_20",
+    "SPEED_LIMIT_30",
+    "SPEED_LIMIT_60",
+    "SPEED_LIMIT_80",
+    "SPEED_LIMIT_100",
+    "PEDESTRIAN_CROSSING",
+    "SCHOOL_ZONE",
+    "OTHER"
+  ],
+  "confusion_matrix": [
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      10
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      19
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      93
+    ]
+  ],
+  "min_classifier_conf": 0.8,
+  "crops": 140,
+  "in_taxonomy": 47,
+  "rejected_as_not_sign": 5,
+  "generic_rate": 0.9929,
+  "accuracy_in_taxonomy": 0.0213,
+  "raw_classifier_accuracy_without_threshold": 0.0426
+}

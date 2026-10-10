@@ -1,0 +1,45 @@
+{
+  "env": {
+    "python": "3.12.15",
+    "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "cpu": "x86_64",
+    "onnxruntime": "1.31.0",
+    "available_providers": [
+      "TensorrtExecutionProvider",
+      "CUDAExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": "NVIDIA GeForce RTX 4060"
+  },
+  "url": "http://127.0.0.1:8000",
+  "tag": "docker",
+  "backend_provider": "CPUExecutionProvider",
+  "round_trip_client": {
+    "n": 500,
+    "mean_ms": 59.63,
+    "p50_ms": 57.288,
+    "p95_ms": 81.133,
+    "p99_ms": 100.53,
+    "max_ms": 164.017,
+    "fps_equiv": 16.8
+  },
+  "api_server_side": {
+    "n": 500,
+    "mean_ms": 56.438,
+    "p50_ms": 54.111,
+    "p95_ms": 77.745,
+    "p99_ms": 96.996,
+    "max_ms": 161.133,
+    "fps_equiv": 17.7
+  },
+  "model_pipeline": {
+    "n": 500,
+    "mean_ms": 55.055,
+    "p50_ms": 52.87,
+    "p95_ms": 76.257,
+    "p99_ms": 95.52,
+    "max_ms": 160.018,
+    "fps_equiv": 18.2
+  },
+  "throughput_fps_sequential": 16.8
+}

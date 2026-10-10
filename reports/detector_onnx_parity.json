@@ -1,0 +1,19 @@
+{
+  "weights": "runs/detect/runs/detect/sprint1_signs/weights/best.pt",
+  "onnx": "models/detector_yolo11n.onnx",
+  "images": 30,
+  "A_pre_post": {
+    "same_box_count": "30/30",
+    "min_iou": 0.9958,
+    "mean_iou": 0.9986,
+    "max_px_diff": 0.05,
+    "pass": true
+  },
+  "B_pytorch": {
+    "same_box_count": "30/30",
+    "min_iou": 0.9959,
+    "mean_iou": 0.9986,
+    "max_px_diff": 0.049,
+    "pass": true
+  }
+}

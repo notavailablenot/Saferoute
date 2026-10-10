@@ -1,0 +1,11 @@
+# Training, export and evaluation (development machine with GPU).
+-r requirements.txt
+torch>=2.0
+torchvision
+ultralytics>=8.3
+onnx
+onnxscript
+matplotlib
+jupyterlab
+ipykernel
+imagehash

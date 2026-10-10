@@ -1,0 +1,11 @@
+# Backend (Logic + Data Access tiers): FastAPI + ONNX Runtime. Installed in the Docker image.
+# No PyTorch / Ultralytics here: inference uses the exported ONNX models only.
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+onnxruntime>=1.18
+numpy>=1.26
+opencv-python-headless>=4.9
+pillow>=10.0
+pyyaml>=6.0
+SQLAlchemy>=2.0

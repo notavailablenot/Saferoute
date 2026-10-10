@@ -1,0 +1,45 @@
+{
+  "env": {
+    "python": "3.12.15",
+    "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "cpu": "x86_64",
+    "onnxruntime": "1.31.0",
+    "available_providers": [
+      "TensorrtExecutionProvider",
+      "CUDAExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": "NVIDIA GeForce RTX 4060"
+  },
+  "url": "http://127.0.0.1:8000",
+  "tag": "native",
+  "backend_provider": "CPUExecutionProvider",
+  "round_trip_client": {
+    "n": 500,
+    "mean_ms": 73.464,
+    "p50_ms": 71.83,
+    "p95_ms": 99.91,
+    "p99_ms": 123.563,
+    "max_ms": 183.278,
+    "fps_equiv": 13.6
+  },
+  "api_server_side": {
+    "n": 500,
+    "mean_ms": 70.374,
+    "p50_ms": 68.742,
+    "p95_ms": 96.786,
+    "p99_ms": 120.783,
+    "max_ms": 180.4,
+    "fps_equiv": 14.2
+  },
+  "model_pipeline": {
+    "n": 500,
+    "mean_ms": 68.884,
+    "p50_ms": 67.404,
+    "p95_ms": 94.951,
+    "p99_ms": 119.065,
+    "max_ms": 179.058,
+    "fps_equiv": 14.5
+  },
+  "throughput_fps_sequential": 13.6
+}

@@ -1,0 +1,45 @@
+{
+  "env": {
+    "python": "3.12.15",
+    "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "cpu": "x86_64",
+    "onnxruntime": "1.31.0",
+    "available_providers": [
+      "TensorrtExecutionProvider",
+      "CUDAExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "gpu": "NVIDIA GeForce RTX 4060"
+  },
+  "detector_provider": "CPUExecutionProvider",
+  "classifier_provider": "CPUExecutionProvider",
+  "warmup": 50,
+  "timed": 500,
+  "detector": {
+    "n": 500,
+    "mean_ms": 34.821,
+    "p50_ms": 33.152,
+    "p95_ms": 47.275,
+    "p99_ms": 53.866,
+    "max_ms": 72.633,
+    "fps_equiv": 28.7
+  },
+  "classifier": {
+    "n": 500,
+    "mean_ms": 0.469,
+    "p50_ms": 0.359,
+    "p95_ms": 0.928,
+    "p99_ms": 1.448,
+    "max_ms": 4.685,
+    "fps_equiv": 2133.9
+  },
+  "cascade_pipeline": {
+    "n": 500,
+    "mean_ms": 63.866,
+    "p50_ms": 62.838,
+    "p95_ms": 82.199,
+    "p99_ms": 102.187,
+    "max_ms": 121.189,
+    "fps_equiv": 15.7
+  }
+}

@@ -10,5 +10,8 @@ runs/
 *.pt
 db/
 saferoute.db*
-reports/*.png
 .env
+*.mp4
+*.avi
+# trained weights are part of the final codebase
+!models/*.pt

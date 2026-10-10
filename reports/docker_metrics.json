@@ -1,0 +1,6 @@
+{
+  "image": "saferoute-api:1.0",
+  "image_size_mb": 727.7,
+  "build_time_s": 38.9,
+  "startup_to_ready_s": 2.34
+}

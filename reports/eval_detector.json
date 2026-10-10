@@ -1,0 +1,18 @@
+{
+  "images": 159,
+  "instances": 185,
+  "operating_conf": 0.35,
+  "precision": 0.822,
+  "recall": 0.8486,
+  "f1": 0.8351,
+  "tp": 157,
+  "fp": 34,
+  "fn": 28,
+  "map50": 0.8924,
+  "map50_95": 0.7719,
+  "model": "models/detector_yolo11n.onnx",
+  "model_sha256": "57b2b6eb3063dbbc702dea9cfb561bcbdbb65e97ea9dee5e74fcc97af9b72afe",
+  "provider": "CPUExecutionProvider",
+  "split": "data/processed/signs_v0/test",
+  "mean_inference_ms": 45.092
+}
