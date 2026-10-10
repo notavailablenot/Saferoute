@@ -29,8 +29,14 @@ def test_main_window_renders_offscreen():
     w = MainWindow("http://127.0.0.1:9", start_health=False)
     res = {"detections": [DET], "alerts": [],
            "timings": {"detect_ms": 4.0, "classify_ms": 0.5, "pipeline_ms": 5.0, "api_ms": 6.0}}
-    w.image.show_result(np.zeros((360, 640, 3), np.uint8), res, 8.0)
-    assert w.image.table.rowCount() == 1
+    text = w.image.format_result(res | {"rejected": 2})
+    assert "SPEED LIMIT 60" in text
+    assert "2 box(es) rejected" in text and "detector 4.0 ms" in text
+    assert "No traffic sign found" in w.image.format_result({"detections": [], "timings": {}})
+    old = w.image.format_result({"label": "STOP", "confidence": 0.9, "top_k": [], "api_ms": 3})
+    assert "STOP" in old and "API 3 ms" in old
+    w.drive.show_banner("Camera disconnected")
+    assert w.drive.banner.text() == "Camera disconnected"
     w.drive.on_alert({"label": "SPEED_LIMIT_60", "tier": 2, "track_id": 3, "confidence": 0.95})
     assert w.drive.badge.text() == "60" and w.drive.history.count() == 1
     w.close()

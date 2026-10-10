@@ -2,25 +2,26 @@
 
 Flow: pick an image -> send it to the backend -> show the result.
 
-Backend response from POST /predict/image (classifier only):
-    {"label": str, "confidence": float,
-     "top_k": [{"label": str, "confidence": float}, ...],
-     "inference_ms": float, "api_ms": float}
+Default endpoint: POST /detect/image (detector + classifier cascade). Response:
+    {"image": {...}, "detections": [{"box": [x1, y1, x2, y2], "det_conf": float,
+      "label": str, "cls_conf": float, "raw_label": str, "tier": int}, ...],
+     "rejected": int, "alerts": [...],
+     "timings": {"detect_ms", "classify_ms", "pipeline_ms", "api_ms"}}
+Boxes and labels are drawn on the image and each sign is listed with its confidence.
 
-If the response also contains a "detections" list (the future /detect/image
-endpoint), boxes and labels are drawn on the image. Each detection is expected
-to look like {"box": [x1, y1, x2, y2], "label": str, "confidence": float}.
-Adjust _draw_detections() once the real /detect/image format is final.
+The older POST /predict/image (classifier only) still works:
+    {"label": str, "confidence": float, "top_k": [...], "inference_ms": float, "api_ms": float}
 
 Test by itself:
     python -m saferoute.gui.upload_tab
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
-import requests
+import httpx
 from PyQt6.QtCore import Qt, QThread, QTimer, pyqtSignal
 from PyQt6.QtGui import QColor, QPainter, QPen, QPixmap
 from PyQt6.QtWidgets import (
@@ -34,9 +35,10 @@ from PyQt6.QtWidgets import (
 )
 
 from saferoute.gui.banners import BACKEND_OFFLINE, Banner
+from saferoute.gui.overlay import pretty
 
-API_URL = "http://127.0.0.1:8000"
-ENDPOINT = "/predict/image"  # change to "/detect/image" once that endpoint exists
+API_URL = os.getenv("SAFEROUTE_API", "http://127.0.0.1:8000")
+ENDPOINT = "/detect/image"
 HEALTH_INTERVAL_MS = 5000
 
 STATUS_MESSAGES = {
@@ -58,7 +60,7 @@ class _HealthThread(QThread):
 
     def run(self):
         try:
-            data = requests.get(f"{self.base_url}/health", timeout=2).json()
+            data = httpx.get(f"{self.base_url}/health", timeout=2).json()
         except Exception:
             self.result.emit(False, BACKEND_OFFLINE)
             return
@@ -84,8 +86,8 @@ class _PredictThread(QThread):
         mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
         try:
             with open(path, "rb") as f:
-                response = requests.post(self.url, files={"file": (path.name, f, mime)}, timeout=15)
-        except (requests.ConnectionError, requests.Timeout):
+                response = httpx.post(self.url, files={"file": (path.name, f, mime)}, timeout=15)
+        except httpx.TransportError:
             self.failed.emit(BACKEND_OFFLINE, True)
             return
         except OSError as exc:
@@ -103,6 +105,11 @@ class _PredictThread(QThread):
         self.failed.emit(f"{message} {detail}".strip(), False)
 
 
+def _conf(d: dict) -> float:
+    """Classifier confidence from /detect/image, or plain confidence from older responses."""
+    return float(d.get("cls_conf", d.get("confidence", 0.0)))
+
+
 def _draw_detections(pixmap: QPixmap, detections: list[dict]) -> QPixmap:
     """Draw boxes and labels on a copy of the image."""
     pixmap = pixmap.copy()
@@ -116,14 +123,15 @@ def _draw_detections(pixmap: QPixmap, detections: list[dict]) -> QPixmap:
     for d in detections:
         x1, y1, x2, y2 = (int(v) for v in d["box"])
         painter.drawRect(x1, y1, x2 - x1, y2 - y1)
-        text = f"{d.get('label', '?')} {d.get('confidence', 0):.0%}"
+        text = f"{pretty(d.get('label', '?'))} {_conf(d):.0%}"
         painter.drawText(x1 + 2, max(font.pixelSize(), y1 - 4), text)
     painter.end()
     return pixmap
 
 
 class UploadTab(QWidget):
-    def __init__(self, api_url: str = API_URL, endpoint: str = ENDPOINT, parent=None):
+    def __init__(self, api_url: str = API_URL, endpoint: str = ENDPOINT, parent=None,
+                 start_health: bool = True):
         super().__init__(parent)
         self.api_url = api_url
         self.endpoint = endpoint
@@ -159,8 +167,9 @@ class UploadTab(QWidget):
         # Check the backend now and then every few seconds.
         self.health_timer = QTimer(self)
         self.health_timer.timeout.connect(self.check_health)
-        self.health_timer.start(HEALTH_INTERVAL_MS)
-        self.check_health()
+        if start_health:
+            self.health_timer.start(HEALTH_INTERVAL_MS)
+            self.check_health()
 
     # --- backend health -------------------------------------------------
     def check_health(self):
@@ -207,18 +216,33 @@ class UploadTab(QWidget):
         if detections and shown is not None:
             shown = _draw_detections(shown, detections)
         self._refresh_image(shown)
+        self.result_label.setText(self.format_result(result))
 
-        lines = [f"<b>{result.get('label', '?')}</b> ({result.get('confidence', 0):.1%})"]
-        for item in result.get("top_k", [])[1:]:
-            lines.append(f"{item['label']} ({item['confidence']:.1%})")
-        timing = []
-        if "inference_ms" in result:
-            timing.append(f"inference {result['inference_ms']} ms")
-        if "api_ms" in result:
-            timing.append(f"API {result['api_ms']} ms")
+    @staticmethod
+    def format_result(result: dict) -> str:
+        """Text under the image, for /detect/image or /predict/image responses."""
+        lines = []
+        if "detections" in result:
+            dets = result["detections"]
+            if not dets:
+                lines.append("<b>No traffic sign found</b>")
+            for d in dets:
+                lines.append(f"<b>{pretty(d['label'])}</b> ({_conf(d):.1%}), "
+                             f"detector {d.get('det_conf', 0):.1%}")
+            if result.get("rejected"):
+                lines.append(f"{result['rejected']} box(es) rejected as not a sign")
+            t = result.get("timings", {})
+            names = (("detect_ms", "detector"), ("classify_ms", "classifier"), ("api_ms", "API"))
+            timing = [f"{name} {t[key]:.1f} ms" for key, name in names if key in t]
+        else:
+            lines.append(f"<b>{result.get('label', '?')}</b> ({result.get('confidence', 0):.1%})")
+            for item in result.get("top_k", [])[1:]:
+                lines.append(f"{item['label']} ({item['confidence']:.1%})")
+            timing = [f"{name} {result[key]} ms" for key, name in
+                      (("inference_ms", "inference"), ("api_ms", "API")) if key in result]
         if timing:
             lines.append("<i>" + ", ".join(timing) + "</i>")
-        self.result_label.setText("<br>".join(lines))
+        return "<br>".join(lines)
 
     def _on_error(self, message: str, backend_offline: bool):
         self.choose_button.setEnabled(True)

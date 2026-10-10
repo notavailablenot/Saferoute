@@ -67,8 +67,9 @@ def test_session_flow_alert_once_and_telemetry(tmp_path, monkeypatch):
     with _client(monkeypatch, tmp_path, tmp_path / "c.onnx", tmp_path / "d.onnx") as c:
         sid = c.post("/sessions", json={"model_version": "test"}).json()["session_id"]
         alerts = []
-        for _ in range(6):  # same sign in 6 frames -> exactly one alert after confirmation
-            r = c.post(f"/detect/image?session_id={sid}", files={"file": ("f.png", _img(), "image/png")})
+        for i in range(8):  # an approaching sign (frames grow, so the box grows) -> exactly one alert
+            r = c.post(f"/detect/image?session_id={sid}",
+                       files={"file": ("f.png", _img(size=(640 + 40 * i, 640 + 40 * i)), "image/png")})
             assert r.status_code == 200
             alerts += r.json()["alerts"]
         assert [a["label"] for a in alerts] == ["STOP"]
