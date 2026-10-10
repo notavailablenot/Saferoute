@@ -29,6 +29,7 @@ from PyQt6.QtWidgets import (QApplication, QCheckBox, QFileDialog, QHBoxLayout, 
                              QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 
 from saferoute.gui.api_client import DEFAULT_URL, ApiClient
+from saferoute.gui.qt_env import fix_qt_env
 from saferoute.gui.overlay import (TIER_COLORS, alert_text, draw_detections, pretty,
                                    scale_detections, speed_value)
 
@@ -478,6 +479,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    fix_qt_env()
     app = QApplication(sys.argv)
     w = MainWindow(os.getenv("SAFEROUTE_API", DEFAULT_URL))
     w.show()

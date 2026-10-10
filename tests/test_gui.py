@@ -23,6 +23,8 @@ def test_main_window_renders_offscreen():
     from PyQt6.QtWidgets import QApplication
 
     from saferoute.gui.app import MainWindow
+    from saferoute.gui.qt_env import fix_qt_env
+    fix_qt_env()
     app = QApplication.instance() or QApplication([])
     w = MainWindow("http://127.0.0.1:9", start_health=False)
     res = {"detections": [DET], "alerts": [],
