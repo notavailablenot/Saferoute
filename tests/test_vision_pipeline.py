@@ -46,8 +46,13 @@ def test_cascade_labels_and_generic_fallback(tmp_path):
     d = sure["detections"][0]
     assert d["label"] == "STOP" and d["tier"] == 1 and d["cls_conf"] > 0.99
     tiny_classifier(tmp_path / "c_reject.onnx", favour=10)
-    rej = SignCascade(det, ClassifierEngine(tmp_path / "c_reject.onnx", NAMES + ["NOT_SIGN"]), TIERS).run(frame)
+    rej = SignCascade(det, ClassifierEngine(tmp_path / "c_reject.onnx", NAMES + ["NOT_SIGN", "OTHER_SIGN"]),
+                      TIERS).run(frame)
     assert rej["detections"] == [] and rej["rejected"] == 1  # billboard-like crop: dropped, no alert
+    tiny_classifier(tmp_path / "c_other.onnx", favour=11)
+    oth = SignCascade(det, ClassifierEngine(tmp_path / "c_other.onnx", NAMES + ["NOT_SIGN", "OTHER_SIGN"]),
+                      TIERS).run(frame)
+    assert oth["detections"][0]["label"] == GENERIC  # real sign of unknown type: "Sign ahead"
     unsure = SignCascade(det, ClassifierEngine(tmp_path / "c_unsure.onnx", NAMES), TIERS).run(frame)
     assert unsure["detections"][0]["label"] == GENERIC  # low confidence -> generic "Sign ahead"
     assert {"detect_ms", "classify_ms", "pipeline_ms"} <= set(sure)

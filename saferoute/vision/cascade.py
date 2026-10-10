@@ -7,7 +7,8 @@ with the generic label SIGN instead of a possibly wrong class, so the driver sti
 
 Rejection (Sprint 2): the classifier also has a NOT_SIGN class trained on hard negatives
 (scripts/make_negative_crops.py). Detector boxes it labels NOT_SIGN (billboards, trees, ...)
-are dropped, so they never reach the tracker or raise an alert.
+are dropped, so they never reach the tracker or raise an alert. OTHER_SIGN (real road-photo
+signs of unknown type) becomes the generic "Sign ahead" alert.
 """
 import time
 
@@ -18,6 +19,7 @@ from saferoute.vision.detector_engine import DetectorEngine
 
 GENERIC = "SIGN"
 REJECT = "NOT_SIGN"
+OTHER = "OTHER_SIGN"  # a real sign of unknown type -> generic "Sign ahead"
 
 
 class SignCascade:
@@ -57,7 +59,7 @@ class SignCascade:
                 if label == REJECT:  # classifier says this is not a traffic sign
                     rejected += 1
                     continue
-                if cconf < self.min_cls_conf:
+                if cconf < self.min_cls_conf or label == OTHER:
                     label = GENERIC
             out.append({**d, "label": label, "cls_conf": round(float(cconf), 4),
                         "raw_label": top[0]["label"] if top else None,

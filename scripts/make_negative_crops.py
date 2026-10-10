@@ -1,4 +1,4 @@
-"""Build the NOT_SIGN rejection class for the crop classifier (hard-negative mining).
+"""Build the NOT_SIGN and OTHER_SIGN classes for the crop classifier (hard-negative mining).
 
 Problem found in Sprint 2 testing: the classifier was trained only on traffic signs, so it must
 pick one of the 10 sign classes for ANY crop. When the detector fired on a billboard, the crop
@@ -10,10 +10,14 @@ Negatives come from the PauloLab photos, split by split (no leakage into val/tes
      (IoU < 0.1), i.e. the detector's own false positives on real road scenes;
   2. random negatives: background boxes with the size of real signs in that split, placed
      where they do not overlap any labelled sign (IoU < 0.05).
+Positives from the SAME photos go to OTHER_SIGN (every labelled sign box; the type is unknown).
+Without them, NOT_SIGN was learned as "any photo that is not a GTSRB crop" and the first
+retrain rejected 125 of 140 real test signs. With signs and non-signs from the same domain,
+the classifier has to learn sign versus not-sign instead of dataset style.
 Crops use the same margin as the cascade (saferoute.vision.cascade.SignCascade.crop).
 
     python scripts/make_negative_crops.py
-Output: data/processed/crops/{train,val,test}/NOT_SIGN/*.png and reports/negative_crops.json
+Output: data/processed/crops/{train,val,test}/{NOT_SIGN,OTHER_SIGN}/*.png, reports/negative_crops.json
 """
 import argparse
 import json
@@ -79,9 +83,11 @@ def main():
     for split in ("train", "val", "test"):
         imgs = sorted(p for p in (Path(a.data) / "images" / split).glob("*") if p.suffix.lower() in IMG_EXT)
         out = Path(a.crops) / split / "NOT_SIGN"
-        out.mkdir(parents=True, exist_ok=True)
-        for old in out.glob("*.png"):
-            old.unlink()
+        pos = Path(a.crops) / split / "OTHER_SIGN"
+        for d in (out, pos):
+            d.mkdir(parents=True, exist_ok=True)
+            for old in d.glob("*.png"):
+                old.unlink()
         loaded, sizes = [], []
         for p in imgs:
             img = cv2.imread(str(p))
@@ -91,8 +97,13 @@ def main():
             sizes += [(b[2] - b[0], b[3] - b[1]) for b in g]
             loaded.append((p, img, g))
         sizes = sizes or [(48.0, 48.0)]
-        n_hard = n_rand = 0
+        n_hard = n_rand = n_pos = 0
         for p, img, g in loaded:
+            for k, b in enumerate(g):
+                crop = cutter.crop(img, b.tolist())
+                if crop is not None:
+                    cv2.imwrite(str(pos / f"{p.stem}_sign{k}.png"), np.ascontiguousarray(crop[:, :, ::-1]))
+                    n_pos += 1
             dets, _ = det.detect(img)
             hard = [d["box"] for d in dets
                     if not len(g) or box_iou(np.array([d["box"]]), g).max() < 0.1]
@@ -106,7 +117,7 @@ def main():
                     n_hard += kind == "hard"
                     n_rand += kind == "rand"
         stats[split] = {"images": len(loaded), "hard_negatives": n_hard, "random_negatives": n_rand,
-                        "total": n_hard + n_rand}
+                        "not_sign_total": n_hard + n_rand, "other_sign_positives": n_pos}
         print(split, stats[split])
     Path("reports").mkdir(exist_ok=True)
     Path("reports/negative_crops.json").write_text(json.dumps(stats, indent=2))

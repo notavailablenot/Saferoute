@@ -134,7 +134,7 @@ def main():
     ap.add_argument("--out", default="reports/cascade_labels.csv")
     a = ap.parse_args()
     data = yaml.safe_load((ROOT / "configs/classes.yaml").read_text())["classes"]
-    names = [data[k]["name"] for k in sorted(data, key=int) if data[k]["name"] != "NOT_SIGN"]
+    names = [data[k]["name"] for k in sorted(data, key=int) if data[k]["name"] not in ("NOT_SIGN", "OTHER_SIGN")]
     items = load_items(Path(a.data), a.split)
     if not items:
         raise SystemExit(f"no labeled images found in {a.data}/images/{a.split}")

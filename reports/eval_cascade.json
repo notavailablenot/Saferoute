@@ -1,21 +1,21 @@
 {
   "n": 140,
-  "accuracy": 0.6786,
+  "accuracy": 0.6714,
   "macro": {
-    "precision": 0.3983,
-    "recall": 0.2745,
-    "f1": 0.297
+    "precision": 0.2384,
+    "recall": 0.1714,
+    "f1": 0.1622
   },
   "weighted": {
-    "precision": 0.5681,
-    "recall": 0.6786,
-    "f1": 0.5967
+    "precision": 0.4802,
+    "recall": 0.6714,
+    "f1": 0.5445
   },
   "per_class": {
     "STOP": {
       "precision": 1.0,
-      "recall": 0.4,
-      "f1": 0.5714,
+      "recall": 0.2,
+      "f1": 0.3333,
       "support": 5
     },
     "YIELD": {
@@ -37,15 +37,15 @@
       "support": 0
     },
     "SPEED_LIMIT_30": {
-      "precision": 0.4286,
-      "recall": 0.375,
-      "f1": 0.4,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
       "support": 8
     },
     "SPEED_LIMIT_60": {
-      "precision": 0.6667,
-      "recall": 0.2,
-      "f1": 0.3077,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
       "support": 10
     },
     "SPEED_LIMIT_80": {
@@ -73,9 +73,9 @@
       "support": 0
     },
     "OTHER": {
-      "precision": 0.6929,
-      "recall": 0.9462,
-      "f1": 0.8,
+      "precision": 0.6691,
+      "recall": 1.0,
+      "f1": 0.8017,
       "support": 93
     }
   },
@@ -94,7 +94,7 @@
   ],
   "confusion_matrix": [
     [
-      2,
+      1,
       0,
       0,
       0,
@@ -104,7 +104,7 @@
       0,
       0,
       0,
-      3
+      4
     ],
     [
       0,
@@ -150,21 +150,8 @@
       0,
       0,
       0,
-      3,
       0,
       0,
-      0,
-      0,
-      0,
-      5
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      2,
       0,
       0,
       0,
@@ -176,13 +163,26 @@
       0,
       0,
       0,
-      1,
       0,
       0,
       0,
       0,
       0,
-      2
+      0,
+      10
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3
     ],
     [
       0,
@@ -228,20 +228,20 @@
       0,
       0,
       0,
-      3,
-      1,
-      0,
-      1,
       0,
       0,
-      88
+      0,
+      0,
+      0,
+      0,
+      93
     ]
   ],
   "min_classifier_conf": 0.8,
   "crops": 140,
   "in_taxonomy": 47,
-  "rejected_as_not_sign": 125,
-  "generic_rate": 0.9071,
-  "accuracy_in_taxonomy": 0.1489,
-  "raw_classifier_accuracy_without_threshold": 0.1489
+  "rejected_as_not_sign": 5,
+  "generic_rate": 0.9929,
+  "accuracy_in_taxonomy": 0.0213,
+  "raw_classifier_accuracy_without_threshold": 0.0426
 }

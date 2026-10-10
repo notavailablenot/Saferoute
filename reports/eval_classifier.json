@@ -1,63 +1,63 @@
 {
-  "n": 4244,
-  "accuracy": 0.9644,
+  "n": 4429,
+  "accuracy": 0.9573,
   "macro": {
-    "precision": 0.9734,
-    "recall": 0.9651,
-    "f1": 0.9683
+    "precision": 0.9579,
+    "recall": 0.9418,
+    "f1": 0.9482
   },
   "weighted": {
-    "precision": 0.9666,
-    "recall": 0.9644,
-    "f1": 0.9646
+    "precision": 0.9595,
+    "recall": 0.9573,
+    "f1": 0.9578
   },
   "per_class": {
     "STOP": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "precision": 0.9963,
+      "recall": 0.9852,
+      "f1": 0.9907,
       "support": 270
     },
     "YIELD": {
       "precision": 0.9972,
-      "recall": 0.9917,
-      "f1": 0.9944,
+      "recall": 0.9889,
+      "f1": 0.993,
       "support": 720
     },
     "NO_ENTRY": {
       "precision": 1.0,
-      "recall": 0.8694,
-      "f1": 0.9302,
+      "recall": 0.9167,
+      "f1": 0.9565,
       "support": 360
     },
     "SPEED_LIMIT_20": {
       "precision": 1.0,
-      "recall": 0.95,
-      "f1": 0.9744,
+      "recall": 0.7833,
+      "f1": 0.8785,
       "support": 60
     },
     "SPEED_LIMIT_30": {
-      "precision": 0.9903,
-      "recall": 0.9903,
-      "f1": 0.9903,
+      "precision": 0.9689,
+      "recall": 0.9944,
+      "f1": 0.9815,
       "support": 720
     },
     "SPEED_LIMIT_60": {
-      "precision": 0.9882,
-      "recall": 0.9311,
-      "f1": 0.9588,
+      "precision": 0.9862,
+      "recall": 0.9533,
+      "f1": 0.9695,
       "support": 450
     },
     "SPEED_LIMIT_80": {
-      "precision": 0.9084,
-      "recall": 0.9603,
-      "f1": 0.9336,
+      "precision": 0.9327,
+      "recall": 0.9683,
+      "f1": 0.9502,
       "support": 630
     },
     "SPEED_LIMIT_100": {
-      "precision": 0.9525,
-      "recall": 0.9356,
-      "f1": 0.9439,
+      "precision": 0.9771,
+      "recall": 0.9467,
+      "f1": 0.9616,
       "support": 450
     },
     "PEDESTRIAN_CROSSING": {
@@ -68,15 +68,21 @@
     },
     "SCHOOL_ZONE": {
       "precision": 1.0,
-      "recall": 0.9933,
-      "f1": 0.9967,
+      "recall": 0.98,
+      "f1": 0.9899,
       "support": 150
     },
     "NOT_SIGN": {
-      "precision": 0.8712,
-      "recall": 0.9947,
-      "f1": 0.9288,
+      "precision": 0.8527,
+      "recall": 0.8824,
+      "f1": 0.8673,
       "support": 374
+    },
+    "OTHER_SIGN": {
+      "precision": 0.784,
+      "recall": 0.9027,
+      "f1": 0.8392,
+      "support": 185
     }
   },
   "labels": [
@@ -90,85 +96,92 @@
     "SPEED_LIMIT_100",
     "PEDESTRIAN_CROSSING",
     "SCHOOL_ZONE",
-    "NOT_SIGN"
+    "NOT_SIGN",
+    "OTHER_SIGN"
   ],
   "confusion_matrix": [
     [
-      270,
+      266,
       0,
       0,
       0,
       0,
       0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      714,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      6
-    ],
-    [
-      0,
-      0,
-      313,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      47
-    ],
-    [
-      0,
-      0,
-      0,
-      57,
-      3,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      1,
-      0,
-      0,
-      713,
-      0,
-      1,
       4,
       0,
       0,
-      1
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      712,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      0
     ],
     [
       0,
       0,
+      330,
       0,
       0,
       0,
-      419,
+      0,
+      0,
+      0,
+      0,
       30,
+      0
+    ],
+    [
       0,
       0,
       0,
+      47,
+      13,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      716,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      429,
+      19,
+      0,
+      0,
+      0,
+      1,
       1
     ],
     [
@@ -176,10 +189,11 @@
       0,
       0,
       0,
-      4,
+      6,
       5,
-      605,
-      16,
+      610,
+      9,
+      0,
       0,
       0,
       0
@@ -189,13 +203,14 @@
       0,
       0,
       0,
+      2,
+      1,
+      19,
+      426,
       0,
       0,
-      29,
-      421,
       0,
-      0,
-      0
+      2
     ],
     [
       0,
@@ -208,6 +223,7 @@
       0,
       60,
       0,
+      0,
       0
     ],
     [
@@ -220,7 +236,8 @@
       1,
       0,
       0,
-      149,
+      147,
+      2,
       0
     ],
     [
@@ -231,15 +248,30 @@
       0,
       0,
       0,
+      0,
+      0,
+      0,
+      330,
+      43
+    ],
+    [
       1,
       0,
       0,
-      372
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      15,
+      167
     ]
   ],
   "model": "models/baseline_cnn.onnx",
-  "model_sha256": "a697b52f07242aaee34b1eb42bf5b9f37280ea59f018de099ce162e8a40ddbac",
+  "model_sha256": "0f1f79e963b8e768c3a390a0300bca498392dc0c9db6218209cc94446fb4b3bb",
   "provider": "CPUExecutionProvider",
   "split": "data/processed/crops/test",
-  "mean_inference_ms": 0.733
+  "mean_inference_ms": 0.619
 }

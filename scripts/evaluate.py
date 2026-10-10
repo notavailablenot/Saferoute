@@ -150,11 +150,13 @@ def eval_cascade(a):
             if raw == "NOT_SIGN":  # rejected by the classifier: no alert at all
                 pred = GENERIC
                 rejected += 1
+            elif raw == "OTHER_SIGN":
+                pred = GENERIC
         abstain += pred == GENERIC
         raw_correct += raw == r["label"]
         y_true.append(r["label"])
         y_pred.append(OTHER if pred == GENERIC else pred)
-    rep = classification_report(y_true, y_pred, [n for n in names if n != "NOT_SIGN"] + [OTHER])
+    rep = classification_report(y_true, y_pred, [n for n in names if n not in ("NOT_SIGN", "OTHER_SIGN")] + [OTHER])
     known = [i for i, t in enumerate(y_true) if t != OTHER]
     rep.update(min_classifier_conf=a.min_cls_conf, crops=len(y_true),
                in_taxonomy=len(known), rejected_as_not_sign=rejected, generic_rate=round(abstain / max(len(y_true), 1), 4),

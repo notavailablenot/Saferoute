@@ -29,7 +29,7 @@ def test_predict_with_model(tmp_path, monkeypatch):
     tiny_classifier(tmp_path / "m.onnx")
     with _client(monkeypatch, tmp_path, tmp_path / "m.onnx") as c:
         h = c.get("/health").json()
-        assert h["status"] == "ready" and h["num_classes"] == 11 and h["detector_ready"] is False
+        assert h["status"] == "ready" and h["num_classes"] == 12 and h["detector_ready"] is False
         r = c.post("/predict/image", files={"file": ("s.png", _img(size=(120, 90)), "image/png")})
         assert r.status_code == 200
         body = r.json()

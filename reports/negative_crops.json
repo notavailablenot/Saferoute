@@ -3,18 +3,21 @@
     "images": 705,
     "hard_negatives": 171,
     "random_negatives": 1410,
-    "total": 1581
+    "not_sign_total": 1581,
+    "other_sign_positives": 777
   },
   "val": {
     "images": 147,
     "hard_negatives": 46,
     "random_negatives": 294,
-    "total": 340
+    "not_sign_total": 340,
+    "other_sign_positives": 181
   },
   "test": {
     "images": 159,
     "hard_negatives": 56,
     "random_negatives": 318,
-    "total": 374
+    "not_sign_total": 374,
+    "other_sign_positives": 185
   }
 }

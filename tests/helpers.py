@@ -7,7 +7,7 @@ import onnx
 from onnx import TensorProto, helper, numpy_helper
 
 
-def tiny_classifier(path: Path, n_classes: int = 11, favour: int | None = None):
+def tiny_classifier(path: Path, n_classes: int = 12, favour: int | None = None):
     """[1,3,64,64] -> [1,n_classes] logits. With `favour`, that class always wins strongly."""
     w = np.random.rand(3, n_classes).astype(np.float32) * 0.01
     b = np.zeros(n_classes, dtype=np.float32)

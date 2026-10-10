@@ -19,3 +19,7 @@ classes:
   # buildings, detector false positives). Built by scripts/make_negative_crops.py from the
   # PauloLab photos. When the classifier picks it, the detection is dropped and no alert is issued.
   10: {name: NOT_SIGN,            tier: 0}
+  # Generic sign class (Sprint 2): real road-photo signs from the PauloLab detector boxes, type unknown.
+  # Trains sign-vs-not-sign in the SAME photo domain, so NOT_SIGN cannot be learned as "any non-GTSRB
+  # image". Predictions of this class are shown as a generic "Sign ahead" alert.
+  11: {name: OTHER_SIGN,          tier: 3}
