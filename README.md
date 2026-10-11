@@ -23,7 +23,14 @@ uv venv --python 3.12 --seed .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest -q
 ```
-
+##1.1 Troubleshoot & Known Issues
+### 1. Codespace: Missing System Libraries (`ImportError: libGL.so.1` or `libEGL.so.1`)
+When running tests (`pytest`) in a fresh GitHub Codespace, you may encounter import errors related to OpenCV (`cv2`) or PyQt6 lacking graphics and display drivers in the headless environment.
+**Fix:** Install the missing system libraries by running the following in the Codespace terminal:
+```bash
+sudo apt-get update
+sudo apt-get install -y libgl1 libxkbcommon-x11-0 libxkbcommon0 libegl1 libfontconfig1 libglib2.0-0
+```
 ## 2. Models
 | File | What | How it was made |
 |---|---|---|
