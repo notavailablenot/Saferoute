@@ -47,7 +47,15 @@ curl http://127.0.0.1:8000/health
 Or natively: `uvicorn saferoute.api.main:app --host 127.0.0.1 --port 8000`.
 API docs (Swagger UI): http://127.0.0.1:8000/docs
 
-## 4. Run the GUI
+## 4. Local Client Setup and Run the GUI
+Select "<>CODE" in the repository root. Then select local and Download Zip.
+Extract the saferoute.zip repository into a designated local folder.
+Open Windows PowerShell and navigate to your extracted folder, and Set the environment variable to point to your remote API URL (ensure the Codespace port is set to Public):
+```bash
+cd path\to\your\SafeRoute
+$env:SAFEROUTE_API="https://<your-codespace-url>-8000.app.github.dev" 
+```
+Install requirements then run the GUI
 ```bash
 pip install -r requirements-gui.txt      # if not installed through pyproject
 python -m saferoute.gui
