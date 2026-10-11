@@ -24,7 +24,7 @@ pip install -e ".[dev]"
 pytest -q
 ```
 ## 1.1 Troubleshoot & Known Issues
-# Codespace: Missing System Libraries (`ImportError: libGL.so.1` or `libEGL.so.1`)
+#Codespace: Missing System Libraries (`ImportError: libGL.so.1` or `libEGL.so.1`)
 When running tests (`pytest`) in a fresh GitHub Codespace, you may encounter import errors related to OpenCV (`cv2`) or PyQt6 lacking graphics and display drivers in the headless environment.
 **Fix:** Install the missing system libraries by running the following in the Codespace terminal:
 ```bash
